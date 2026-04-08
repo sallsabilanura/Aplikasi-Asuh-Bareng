@@ -251,8 +251,11 @@
                            type="password" 
                            name="password_confirmation" 
                            required 
-                           placeholder="Masukkan ulang password">
+                           autocomplete="new-password"
+                           placeholder="Ulangi password">
                 </div>
+
+
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn-register">

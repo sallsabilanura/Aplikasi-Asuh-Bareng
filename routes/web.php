@@ -30,12 +30,14 @@ Route::get('/dashboard', function () {
             ->whereYear('Tanggal', now()->year)
             ->count();
         
-        // Additional Admin Stats
-        $pendingRekrutmen = \App\Models\PendaftarRekrutmen::count(); // Total pendaftar (could filter by status if added later)
+        $pendingRekrutmen = \App\Models\PendaftarRekrutmen::count();
         $pendingProgram = \App\Models\RencanaProgram::where('Status', 'Menunggu')->count();
         $pendingLogbook = \App\Models\LogbookRelawan::where('StatusValidasi', 'Belum Diperiksa')->count();
 
         return view('dashboard', compact('totalAnak', 'absensiBulanIni', 'pendingRekrutmen', 'pendingProgram', 'pendingLogbook'));
+    } 
+    elseif ($user->role === 'donatur') {
+        return redirect()->route('donor.dashboard');
     }
     else {
         $kakakAsuh = $user->kakakAsuh;
@@ -48,7 +50,6 @@ Route::get('/dashboard', function () {
                 ->whereYear('Tanggal', now()->year)
                 ->count();
             
-            // Additional Kakak Asuh Stats
             $programAktif = \App\Models\RencanaProgram::where('KakakAsuhID', $kakakAsuh->KakakAsuhID)
                 ->where('Status', 'Disetujui')
                 ->count();
@@ -65,6 +66,9 @@ Route::get('/dashboard', function () {
         }
     }
 })->middleware(['auth'])->name('dashboard');
+
+// Midtrans Callback (External)
+Route::post('/donasi/callback', [\App\Http\Controllers\DonorController::class, 'donationCallback'])->name('donor.donasi.callback');
 
 Route::middleware(['auth'])->group(function () {
     // PDF Export Routes
@@ -152,6 +156,26 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/galeri', [\App\Http\Controllers\AdminGaleriController::class , 'store'])->name('admin.galeri.store');
     Route::delete('/admin/galeri/{id}', [\App\Http\Controllers\AdminGaleriController::class , 'destroy'])->name('admin.galeri.destroy');
     Route::patch('/admin/galeri/{id}/toggle', [\App\Http\Controllers\AdminGaleriController::class , 'toggleStatus'])->name('admin.galeri.toggle');
+
+    // Donor Routes
+    Route::middleware(['auth'])->prefix('donor')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\DonorController::class, 'index'])->name('donor.dashboard');
+        Route::get('/anak-asuh', [\App\Http\Controllers\DonorController::class, 'anakAsuhList'])->name('donor.anak_asuh.index');
+        Route::get('/anak-asuh/{id}', [\App\Http\Controllers\DonorController::class, 'anakAsuhDetail'])->name('donor.anak_asuh.show');
+        Route::get('/donasi', [\App\Http\Controllers\DonorController::class, 'donationForm'])->name('donor.donasi');
+        Route::post('/donasi/process', [\App\Http\Controllers\DonorController::class, 'processDonation'])->name('donor.donasi.process');
+    });
+
+    // Admin Donation Management
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/donations', [\App\Http\Controllers\AdminDonationController::class, 'index'])->name('donations.index');
+        Route::post('/donations/{id}/approve', [\App\Http\Controllers\AdminDonationController::class, 'approve'])->name('donations.approve');
+        Route::post('/donations/{id}/reject', [\App\Http\Controllers\AdminDonationController::class, 'reject'])->name('donations.reject');
+
+        // Security Monitoring
+        Route::get('/security', [\App\Http\Controllers\Admin\SecurityController::class, 'index'])->name('security.index');
+        Route::post('/security/cleanup', [\App\Http\Controllers\Admin\SecurityController::class, 'destroyOldLogs'])->name('security.cleanup');
+    });
 
 });
 

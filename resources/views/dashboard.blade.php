@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">Overview</x-slot>
 
-    <div class="mb-8 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden relative">
-        <div class="p-6 sm:p-10 relative z-10 flex flex-col sm:flex-row items-center justify-between">
-            <div class="text-center sm:text-left mb-4 sm:mb-0 flex-1">
+    <div class="mb-4 sm:mb-8 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+        <div class="p-6 sm:p-10 relative z-10 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left">
+            <div class="mb-6 sm:mb-0 flex-1">
                 <h2 class="text-2xl sm:text-4xl font-extrabold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-green-500">
                     Selamat Datang, {{ Auth::user()->name }}! 
                 </h2>
@@ -16,7 +16,7 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+        <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
             <div>
                 <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Anak Asuh</h3>
                 <p class="text-2xl font-black text-gray-800">{{ $totalAnak }}</p>
@@ -43,6 +43,18 @@
                 </div>
                 <div class="p-3 bg-yellow-50 text-yellow-600 rounded-lg group-hover:scale-110">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                </div>
+            </a>
+            <a href="{{ route('admin.donations.index') }}" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-pink-500 flex items-center justify-between hover:shadow-md transition-all group">
+                <div>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Donasi Perlu Verifikasi</h3>
+                    @php
+                        $pendingDonationsCount = \App\Models\Donation::where('status', 'pending')->count();
+                    @endphp
+                    <p class="text-2xl font-black text-gray-800">{{ $pendingDonationsCount }}</p>
+                </div>
+                <div class="p-3 bg-pink-50 text-pink-500 rounded-lg group-hover:scale-110">
+                    <i data-lucide="heart-handshake" class="w-6 h-6"></i>
                 </div>
             </a>
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 border-l-4 border-l-blue-500 flex items-center justify-between">

@@ -46,20 +46,61 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'kakak_asuh',
+            'role' => 'pending',
             'is_approved' => false,
         ]);
 
-        \App\Models\KakakAsuh::create([
-            'user_id' => $user->id,
-            'NamaLengkap' => $user->name,
-            'Email' => $user->email,
-            'NomorHP' => '-',
-            'Alamat' => '-',
-            'StatusAktif' => 'nonaktif',
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect()->route('register.role');
+    }
+
+    /**
+     * Display role selection view (Step 2).
+     */
+    public function showRoleSelection()
+    {
+        if (Auth::user()->role !== 'pending') {
+            return redirect()->route('dashboard');
+        }
+        return view('auth.register-role');
+    }
+
+    /**
+     * Save selected role (Step 2).
+     */
+    public function storeRole(Request $request)
+    {
+        $request->validate([
+            'role' => ['required', 'string', 'in:donatur,kakak_asuh'],
         ]);
 
-        event(new Registered($user));
+        $user = Auth::user();
+        $isDonatur = $request->role === 'donatur';
+
+        $user->update([
+            'role' => $request->role,
+            'is_approved' => $isDonatur ? true : false,
+        ]);
+
+        if ($isDonatur) {
+            \App\Models\Donatur::create([
+                'user_id' => $user->id,
+                'NamaLengkap' => $user->name,
+                'Email' => $user->email,
+            ]);
+        } else {
+            \App\Models\KakakAsuh::create([
+                'user_id' => $user->id,
+                'NamaLengkap' => $user->name,
+                'Email' => $user->email,
+                'NomorHP' => '-',
+                'Alamat' => '-',
+                'StatusAktif' => 'nonaktif',
+            ]);
+        }
 
         // Notify admins
         try {
@@ -69,12 +110,14 @@ class RegisteredUserController extends Controller
             }
         }
         catch (\Exception $e) {
-        // Ignore email fail
+            // Ignore email fail
         }
 
-        // Prevent auto-login for new users, require admin approval
-        // Auth::login($user);
+        if ($isDonatur) {
+            return redirect()->route('dashboard');
+        }
 
-        return redirect()->route('login')->with('status', 'Registrasi berhasil. Akun Anda sedang menunggu persetujuan Admin sebelum bisa digunakan.');
+        Auth::logout();
+        return redirect()->route('login')->with('status', 'Registrasi berhasil. Akun Kakak Asuh Anda sedang menunggu persetujuan Admin.');
     }
 }

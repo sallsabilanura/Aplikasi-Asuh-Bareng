@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\ActivityLogger;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -32,6 +33,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        ActivityLogger::log('Login', 'User berhasil login melalui Web.');
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
@@ -48,6 +51,8 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+
+        ActivityLogger::log('Logout', 'User berhasil logout.');
 
         return redirect('/');
     }

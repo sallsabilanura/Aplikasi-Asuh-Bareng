@@ -12,8 +12,8 @@
     <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 mb-6 border-l-4 border-l-pink-500 flex flex-col xl:flex-row justify-between items-start xl:items-end gap-4 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]" x-data="{ showImportModal: false }">
         
         <form action="{{ route('anak_asuh.index') }}" method="GET" class="w-full">
-            <div class="flex flex-wrap gap-3 items-end w-full">
-                <div class="flex-1 min-w-[200px]">
+            <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-end w-full">
+                <div class="w-full lg:flex-1">
                     <label for="search" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Cari Nama</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -22,30 +22,30 @@
                         <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Ketik nama anak..." class="pl-9 w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 text-sm py-2">
                     </div>
                 </div>
-                <div class="w-24 min-w-[90px]">
+                <div class="w-full lg:w-32">
                     <label for="umur" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Umur</label>
                     <input type="number" name="umur" id="umur" value="{{ request('umur') }}" placeholder="Tahun" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 text-sm py-2">
                 </div>
                 
-                <div class="flex gap-2">
-                    <button type="submit" class="bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center" title="Cari Data">
+                <div class="flex gap-2 w-full lg:w-auto">
+                    <button type="submit" class="flex-1 lg:flex-none bg-pink-100 hover:bg-pink-200 text-pink-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center">
                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         Cari
                     </button>
                     @if(request()->anyFilled(['search', 'umur']))
-                    <a href="{{ route('anak_asuh.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center" title="Reset Pencarian">
+                    <a href="{{ route('anak_asuh.index') }}" class="flex-1 lg:flex-none bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center">
                         Reset
                     </a>
                     @endif
                 </div>
 
                 <!-- Action Buttons: Add + Import Excel Icon -->
-                <div class="flex gap-2 ml-auto lg:border-l lg:border-gray-200 lg:pl-3 w-full lg:w-auto mt-3 lg:mt-0">
-                    <a href="{{ route('anak_asuh.create') }}" class="flex-1 lg:flex-none bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center hover:-translate-y-0.5">
+                <div class="flex gap-2 w-full lg:w-auto mt-2 lg:mt-0 lg:border-l lg:border-gray-200 lg:pl-4">
+                    <a href="{{ route('anak_asuh.create') }}" class="flex-1 lg:flex-none bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center">
                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Tambah
                     </a>
-                    <button type="button" @click="showImportModal = true" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center hover:-translate-y-0.5" title="Import Data Excel">
+                    <button type="button" @click="showImportModal = true" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg shadow-sm transition-all duration-200 flex items-center justify-center" title="Import Excel">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </button>
                 </div>

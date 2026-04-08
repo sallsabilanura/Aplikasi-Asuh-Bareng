@@ -51,6 +51,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
+    Route::get('register/role', [RegisteredUserController::class, 'showRoleSelection'])
+                ->name('register.role');
+
+    Route::post('register/role', [RegisteredUserController::class, 'storeRole']);
+
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
 });

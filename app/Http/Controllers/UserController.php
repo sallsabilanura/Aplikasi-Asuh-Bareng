@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserApprovedEmail;
+use App\Helpers\ActivityLogger;
 
 class UserController extends Controller
 {
@@ -39,6 +40,8 @@ class UserController extends Controller
         if ($user->kakakAsuh) {
             $user->kakakAsuh->update(['StatusAktif' => 'aktif']);
         }
+
+        ActivityLogger::log('Update', "Admin menyetujui akun relawan: {$user->name} ({$user->email})");
 
         // Send email notification (Wrapped in try-catch to prevent Mailtrap rate limits from failing approval)
         try {

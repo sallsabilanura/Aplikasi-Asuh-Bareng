@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(KakakAsuh::class , 'user_id');
     }
+
+    public function donatur()
+    {
+        return $this->hasOne(Donatur::class , 'user_id');
+    }
 }
